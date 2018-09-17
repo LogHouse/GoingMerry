@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<style>
+      .chat_log{ width: 95%; height: 200px; }
+      .name{ width: 10%; }
+      .message{ width: 70%; }
+      .submit{ width: 10%; }
+
+	  canvas {
+            border: 1px solid black;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            width: 800px;
+        }
+        
+        #imgrsc {
+            display: none;
+        }
+    </style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+
+		var socket;
+		var userId;
+
+		$( function(){
+			socket = io();
+			userId = "user" + Math.floor(Math.random() * 100) + 1;
+
+			socket.on("update", function(pos){
+				ball.x = pos;
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage( ball.img, ball.x, ball.y, ball.width, ball.height );
+			});
+		});		
+		
+	</script>
+
+	<script>
+		var canvas;
+        var ctx;
+		
+		var ball = {};
+		var drawTimerID;
+        var updateTimerID;
+
+		function init()
+		{
+			canvas = $("#canvas")[0];
+
+            if ( canvas.getContext ) 
+			{
+                ctx = canvas.getContext('2d');      // draw render 를 하는 도구들
+            } 
+			else 
+			{
+                alert("ERROR : context를 얻어오지 못했습니다.")
+                return;
+            }
+			
+			drawTimerID = 0;
+			updateTimerID = 0;
+
+			ball.x = 100;
+			ball.y = 100;
+			ball.width = 30;
+			ball.height = 30;
+			ball.img = $("#ball")[0]; 
+
+			ctx.drawImage( ball.img, ball.x, ball.y, ball.width, ball.height );
+
+			document.addEventListener("keydown", KeyDownHandler, false); 	// 이벤트 핸들러에 등록
+            document.addEventListener("keyup", KeyUpHandler, false);
+
+		//	drawTimerID = setInterval(draw, 10); 		// 10ms 마다 draw, update 함수 호출
+        //    updateTimerID = setInterval(update, 10);
+		}
+
+		function draw()
+		{
+
+		}
+
+		function update()
+		{
+			
+		}
+
+		function KeyDownHandler(e) 
+		{
+            switch (e.key) {
+
+                case 'ArrowLeft':
+					ball.x -= 5;
+                    break;
+                case 'ArrowRight':
+                    ball.x += 5;
+                    break;
+
+                default:
+                    break;
+            }
+			socket.emit( "update", ball.x );
+			
+        }
+
+        function KeyUpHandler(e) {
+
+			switch (e.key) {
+
+                case 'ArrowLeft':
+					ballX -= 5;
+                    break;
+                case 'ArrowRight':
+                    ballX += 5;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+	</script>
+
+</head>
+<body onload="init();">
+
+	<canvas id="canvas" width="800" height="600"></canvas>
+
+	<div id="imgrsc">
+
+		<img id="ball" src="https://i.imgur.com/WGB7J1N.png" alt="">
+
+	</div>
+
+</body>
+</html>

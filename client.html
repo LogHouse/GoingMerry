@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    canvas {
+      border: 1px solid black;
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      width: 800px;
+    }
+
+    #imgrsc {
+      display: none;
+    }
+  </style>
+
+  <script src="/socket.io/socket.io.js"></script> <!-- 1 -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+  <script>
+    var socket = io(); //1
+    
+    socket.on('drawaccept', function(count){
+      if( count == 1 ) ctx.drawImage(ballImage1, 100, 100);
+      else if( count == 2 ) ctx.drawImage(ballImage2, 200, 200);
+      socket.emit('draw', 'drawcomplete!');
+      console.log('draw accept');
+      console.log( count );
+      console.log(ctx );
+    });
+
+    var canvas;
+    var ctx;
+    var ballImage1;
+    var ballImage2;
+
+    function init() {
+      canvas = document.getElementById('canvas_id');
+      if (canvas.getContext) {
+        ctx = canvas.getContext('2d');
+      }
+      else {
+        alert("ERROR : context를 얻어오지 못했습니다.")
+        return;
+      }
+
+      //    setInterval( draw, 10 );        // 10ms 마다 draw, update 함수 호출
+      //    setInterval( update, 10 );
+
+      //    document.addEventListener( "keydown", KeyDownHandler ,false );  // 이벤트 핸들러에 등록
+      //    document.addEventListener( "keyup", KeyUpHandler ,false );
+      ballImage = document.getElementById('ball');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //  ctx.drawImage( ballImage1, 100, 100 );
+    //  ctx.drawImage( ballImage2, 300, 300 );
+     
+    }
+
+    function draw() {
+           // rect영역을 지움 
+
+    }
+
+  </script>
+
+</head>
+
+<body onload="init();">
+
+
+  <canvas id="canvas_id" width="800" height="600"></canvas>
+  <div id="imgrsc">
+    <img id="ball1" src="https://i.imgur.com/dYdp03r.jpg">
+    <img id="ball2" src="https://i.imgur.com/XBB1L77.png">
+  </div>
+
+</body>
+
+</html>
